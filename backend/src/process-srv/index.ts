@@ -1,12 +1,12 @@
 import express from 'express';
 import { Settings } from "./config";
+import { router } from "./routers";
 
 const app = express();
 const PORT = Settings.port;
-console.log("PORT: " + process.env.PORT);
-app.get('/', (req, res) => {
-  res.send('Hello, TypeScript Node.js!');
-});
+
+app.use(express.json());
+app.use("/api", router);
 
 app.listen(PORT, () => {
   console.log("listening on port " + PORT);
