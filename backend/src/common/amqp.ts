@@ -19,7 +19,7 @@ import { Settings } from "../config";
  * ```*/
 
 export const sendMessage = async(message: string): Promise<void> => {
-    const connection: Connection = await connect('amqp://localhost');
+    const connection: Connection = await connect('amqp://admin:password@rabbitmq-cluster-ip-srv');
     const channel = await connection.createChannel();
 
     const queue = Settings.from_listener_queue_name; // Name of the queue
