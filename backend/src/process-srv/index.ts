@@ -1,9 +1,9 @@
 import express from 'express';
-import { Config } from "./common/config";
+import { Settings } from "./config";
 
 const app = express();
-const PORT = Config.port;
-
+const PORT = Settings.port;
+console.log("PORT: " + process.env.PORT);
 app.get('/', (req, res) => {
   res.send('Hello, TypeScript Node.js!');
 });
