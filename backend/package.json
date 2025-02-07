@@ -1,31 +1,23 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "backend of the alert system",
-  "main": "index.ts",
+  "main": "index.js",
   "license": "MIT",
-  "type": "module",
   "dependencies": {
-    "@types/cookie-parser": "^1.4.8",
-    "@types/express": "^5.0.0",
-    "@types/http-errors": "^2.0.4",
-    "cookie-parser": "^1.4.7",
-    "debug": "~2.6.9",
-    "express": "^4.21.2",
-    "http-errors": "^2.0.0",
-    "path": "^0.12.7",
-    "tsconfig-paths": "^4.2.0"
+    "express": "^4.21.2"
+  },
+  "scripts": {
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "prettier": "prettier --write ."
   },
   "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.1",
+    "nodemon": "^3.1.9",
     "prettier": "^3.4.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
-  },
-  "scripts": {
-    "dev": "ts-node src/index.ts",
-    "process-service": "node --loader ts-node/esm src/process-service/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "format": "prettier --write ."
   }
 }
