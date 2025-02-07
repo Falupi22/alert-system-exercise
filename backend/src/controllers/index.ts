@@ -1,3 +1,3 @@
-import { postAlertHandler } from "./alerts";
+import { postAlertHandler } from './alerts';
 
-export { postAlertHandler }
+export { postAlertHandler };

@@ -1,3 +1,3 @@
-import router from "./alerts";
+import router from './alerts';
 
 export { router };

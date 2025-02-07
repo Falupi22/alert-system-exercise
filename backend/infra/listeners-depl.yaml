@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: listeners-depl
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: listeners
+    template:
+        metadata:
+            labels:
+                app: listeners
+        spec:
+            containers:
+                - name: listeners
+                  imagePullPolicy: Never
+                  image: falupi22/listener-srv
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: listeners-srv
+spec:
+    type: NodePort
+    selector:
+        app: listeners
+    ports:
+        - name: listeners
+          protocol: TCP
+          port: 4000
+          targetPort: 4000
+          nodePort: 30000

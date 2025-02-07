@@ -1,17 +1,11 @@
 import express from 'express';
-import asyncHandler from "express-async-handler"
+import asyncHandler from 'express-async-handler';
+import { postAlertHandler } from "../controllers";
 
 const router = express.Router();
 
-router.post('/alerts', asyncHandler(async (req, res) => {
-    // Mock implementation
-    const mockAlert = {
-        id: 1,
-        message: "This is a mock alert",
-        timestamp: new Date().toISOString()
-    };
-
-    res.status(201).json(mockAlert);
-}));
+router.post(
+    '/alerts', postAlertHandler
+);
 
 export default router;

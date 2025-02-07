@@ -1,3 +1,3 @@
-import Settings from "./config";
+import Settings from './config';
 
 export { Settings };

@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./
+      dockerfile: DockerFile
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./:/app
+    environment:
+      NODE_ENV: development
+    command: yarn start
