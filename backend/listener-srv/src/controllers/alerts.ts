@@ -28,7 +28,10 @@ export const postAlertHandler = asyncHandler(async (req, res) => {
 
     // Add uuid to the event    
     event.uuid = randomUUID().toString();
-    sendMessage(JSON.stringify(event));
-
-    res.status(200).json('Event processed successfully');
+    if (await sendMessage(JSON.stringify(event))) {
+        res.status(200).json('Event processed successfully');
+    }
+    else {
+        res.status(500).json('RabbitMQ error occurred');
+    }
 });

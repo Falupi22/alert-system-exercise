@@ -18,7 +18,8 @@ import { Settings } from "../config";
  * sendMessage('Task 2');ge);
  * ```*/
 
-export const sendMessage = async(message: string): Promise<void> => {
+export const sendMessage = async(message: string): Promise<boolean> => {
+    try {
     const connection: Connection = await connect('amqp://admin:password@rabbitmq-cluster-ip-srv');
     const channel = await connection.createChannel();
 
@@ -31,6 +32,12 @@ export const sendMessage = async(message: string): Promise<void> => {
     channel.sendToQueue(queue, Buffer.from(message), {
         persistent: true, // Ensures the message survives RabbitMQ restarts
     });
-
     console.log('Sent:', message);
+
+    return true;
+
+    } catch (error) { 
+        console.error('Error sending message:', error);
+        return false;
+    }
 }
