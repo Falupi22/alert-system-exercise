@@ -5,16 +5,16 @@ import { io } from "socket.io-client";
 
 const AlertListener = ({ selectedLocations }) => {
   useEffect(() => {
-    const socket = io("http://localhost:4000"); // Replace with your backend URL
+    const socket = io("http://localhost:30001"); // Replace with your backend URL
 
     socket.on("alert", (data) => {
-      const { location, eventType, type, startTime, endTime } = data;
-
+      const { location, eventType, type, sentTime, duration } = data;
+      console.log("Alert received", data);
       if (selectedLocations.includes(location)) {
         toast.info(
           `${eventType.toUpperCase()} Alert: ${type} in ${location} 
-          (${new Date(startTime).toLocaleTimeString()} - 
-          ${new Date(endTime).toLocaleTimeString()})`
+          (${new Date(sentTime).toLocaleTimeString()} - 
+          ${new Date(duration).toLocaleTimeString()})`
         );
       }
     });
