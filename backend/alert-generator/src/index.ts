@@ -1,4 +1,5 @@
 import axios from 'axios';
+import dayjs from "dayjs";
 import * as readline from 'readline';
 
 const rl = readline.createInterface({
@@ -21,8 +22,8 @@ rl.question('How many requests per minute? ', (answer) => {
         const event = {
             "location": "Nahariya",
             "type": "Rocket Alert",
-            "timestamp": "2025-01-22T10:00:00Z",
-            "duration": 10
+            "timestamp": dayjs().add(1, 'minute').toISOString(),
+            "duration": 1
         };
 
         axios.post(url, event)
