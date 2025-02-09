@@ -20,7 +20,7 @@ export const postAlertHandler = asyncHandler(async (req, res) => {
         !event.timestamp ||
         typeof event.duration !== 'number'
     ) {
-        res.status(400).send('Invalid event data');
+        res.status(400).json('Invalid event data');
     }
 
     // Process the event (this is just a placeholder, replace with actual processing logic)

@@ -7,6 +7,8 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
+const locations: Array<string> = ['Nahariya', 'Haifa', 'Tel Aviv', 'Jerusalem'];
+
 rl.question('How many requests per minute? ', (answer) => {
     const requestsPerMinute = parseInt(answer);
     if (isNaN(requestsPerMinute) || requestsPerMinute <= 0) {
@@ -20,7 +22,7 @@ rl.question('How many requests per minute? ', (answer) => {
 
     const sendRequest = () => {
         const event = {
-            "location": "Nahariya",
+            "location": locations[Math.floor(Math.random() * locations.length)],
             "type": "Rocket Alert",
             "timestamp": dayjs().add(1, 'minute').toISOString(),
             "duration": 1
@@ -28,10 +30,10 @@ rl.question('How many requests per minute? ', (answer) => {
 
         axios.post(url, event)
             .then(response => {
-                console.log('Request sent successfully:', response.data);
+            console.log('Request sent successfully:', response.data);
             })
             .catch(error => {
-                console.error('Error sending request:', error);
+            console.error('Error sending request:', error);
             });
     };
 

@@ -5,10 +5,22 @@ import dayjs from "dayjs";
 let redisClient: RedisClientType;
 
 export const connectRedis = async(): Promise<void> => { 
-    redisClient = createClient({ url: 'redis://redis-cluster-ip-srv:6379' });
-    redisClient.on('error', (err) => console.log('Redis Client Error', err));
-    redisClient.on('connect', () => console.log('Redis Client Connected'));
-    await redisClient.connect();
+    const connectWithRetry = async () => {
+        try {
+            redisClient = createClient({ url: 'redis://redis-cluster-ip-srv:6379' });
+            redisClient.on('error', (err) => {
+                console.log('Redis Client Error', err);
+                setTimeout(connectWithRetry, 5000); // Retry connection after 5 seconds
+            });
+            redisClient.on('connect', () => console.log('Redis Client Connected'));
+            await redisClient.connect();
+        } catch (err) {
+            console.log('Failed to connect to Redis, retrying in 5 seconds...', err);
+            setTimeout(connectWithRetry, 5000); // Retry connection after 5 seconds
+        }
+    };
+
+    await connectWithRetry();
 }
 
 // Function to set a key-value pair in Redis
