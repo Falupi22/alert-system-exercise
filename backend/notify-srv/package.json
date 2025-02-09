@@ -1,13 +1,14 @@
 {
-    "name": "listener-srv",
+    "name": "notify-srv",
     "version": "1.0.0",
-    "main": "index.ts",
+    "main": "index.js",
     "license": "MIT",
     "dependencies": {
-        "amqplib": "^0.10.5",
+        "axios": "^1.7.9",
         "dotenv": "^16.4.7",
         "express": "^4.21.2",
-        "uuid": "^11.0.5"
+        "redis": "^4.7.0",
+        "socket.io": "^4.8.1"
     },
     "scripts": {
         "dev": "nodemon src/index.ts",
@@ -16,10 +17,8 @@
         "prettier": "prettier --write ."
     },
     "devDependencies": {
-        "@types/amqplib": "^0.10.6",
         "@types/express": "^5.0.0",
         "@types/node": "^22.13.1",
-        "express-async-handler": "^1.2.0",
         "nodemon": "^3.1.9",
         "prettier": "^3.4.2",
         "ts-node": "^10.9.2",

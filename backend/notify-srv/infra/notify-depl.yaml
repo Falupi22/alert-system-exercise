@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: notify-depl
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: notify
+    template:
+        metadata:
+            labels:
+                app: notify
+        spec:
+            containers:
+                - name: notify
+                  imagePullPolicy: Never
+                  image: falupi22/notify-srv
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: notify-cluster-ip-srv
+spec:
+    type: ClusterIP
+    selector:
+        app: notify
+    ports:
+        - name: notify
+          protocol: TCP
+          port: 4002
+          targetPort: 4002
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: notify-srv
+spec:
+    type: NodePort
+    selector:
+        app: notify
+    ports:
+        - name: notify
+          protocol: TCP
+          port: 4002
+          targetPort: 4002
+          nodePort: 30001
