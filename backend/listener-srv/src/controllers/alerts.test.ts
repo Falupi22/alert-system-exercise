@@ -1,7 +1,7 @@
 import request from 'supertest';
 import express from 'express';
 import { postAlertHandler } from './alerts';
-import { sendMessage } from '../common/amqp';
+import { Settings } from "../config";
 
 jest.mock('../common/amqp');
 jest.mock('crypto', () => ({
@@ -29,6 +29,7 @@ describe('postAlertHandler', () => {
 
     it('should return 200 and process the event successfully', async () => {
         const sendMessage = jest.fn().mockResolvedValue(true);
+        console.log(Settings.rabbit_address)
 
         const response = await request(app)
             .post('/alert')

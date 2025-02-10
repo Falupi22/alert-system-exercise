@@ -3,7 +3,7 @@ import { Settings } from "../config";
 import { ProcessedAlertEvent } from "./types";
 
 const createClient = async (messageCallback: (event: ProcessedAlertEvent) => void) => {
-    const subscriber = redis.createClient({ url: 'redis://redis-cluster-ip-srv:6379' });
+    const subscriber = redis.createClient({ url: Settings.redis_address });
     console.log('Creating Redis client...');
     subscriber.on('error', (err) => console.error('Redis Client Error:', err));
     subscriber.on('connect', () => console.log('Connected to Redis'));

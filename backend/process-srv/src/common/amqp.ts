@@ -2,7 +2,7 @@ import amqp, { Connection } from 'amqplib';
 import { Settings } from "../config";
 import { AlertEvent } from "./types";
 
-const RABBITMQ_URL = 'amqp://admin:password@rabbitmq-cluster-ip-srv';
+const RABBITMQ_URL = Settings.rabbit_address;
 const QUEUE_NAME = Settings.from_listener_queue_name;
 
 let connection: Connection;
