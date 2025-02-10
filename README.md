@@ -13,8 +13,7 @@ This system receives emergency alerts from various sources in real-time and tran
 
 This repo consists of the built-in front-end React.js application, and a back-end, microservices-based Node.js server consisting of three microservices written in TypeScript.
 
-The root folder contains the frontend folder given in the task,
-the backend folder which contains most of the content, assets folder for the screenshots and docs folder for more profound docs.
+The root folder contains the frontend folder given in the task, the backend folder which contains most of the content - each microservice has a folder. It also contains a Skaffold file - will be explained later. There is the assets folder for the screenshots and docs folder for more profound documentation - design motivation.
 
 ### Alert Generator (alert-generator)🤖
 
@@ -52,13 +51,16 @@ It also assumes you have Node.js and Docker installed on your PC (Docker's k8s e
 
 Now open cmd in the folder generated. Then type the following:
 
-`cd backend`
-`yarn install`
+`cd backend && yarn install`
 
 This should install all the modules of all the microservices.
-The ports 30000 and 30001 were used arbitrarily for the entry point of some components in the system, but this can be changed by setting .env variables within the microservice/app folder or in the config file itself.
+The ports 30000 and 30001 were used arbitrarily for the entry point of some components in the system, but this can be changed by setting NodePort values within the corresponding yaml files.
 
-Hit `yarn dev` to run a single, local instance of each microservice.
+Once you're in a microservice's folder, type `yarn dev` to run a single, local instance of it.
+Each folder contains the code (./src) and the yaml files (./infra).
+
+If you wish to run it within a docker, type
+`docker build -t falupi22/(name of the image in the relevant yaml file) -f ./DockerFile . && docker run`
 
 A fully working system, receiving data, should result in the following:
 
@@ -82,6 +84,8 @@ You should see the following:
 
 ## Notes
 
-- The frontend was tweaked due to mismatching names of parameters within the task (sentTime - startTime, duration - endTime). I stuck with the names in the task.
+- There is a NodePort service for the UI management tools of the RabbitMQ. It is included within the yaml but is not necessary for a functioning system.
+  
+- The frontend was tweaked due to mismatching names of parameters within the task (sentTime - startTime, duration - endTime). I stuck with the names given by the task.
 
 - The port of the socket IO server has been replaced (4000-30001) for convenience issues (NodePort port is usually a 5-digit number).
