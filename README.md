@@ -13,6 +13,9 @@ This system receives emergency alerts from various sources in real-time and tran
 
 This repo consists of the built-in front-end React.js application, and a back-end, microservices-based Node.js server consisting of three microservices written in TypeScript.
 
+The root folder contains the frontend folder given in the task,
+the backend folder which contains most of the content, assets folder for the screenshots and docs folder for more profound docs.
+
 ### Alert Generator (alert-generator)🤖
 
 A script that mimics a real-life alert resource.
@@ -30,7 +33,7 @@ The message broker between the Listener and the Processor Microservice (see the 
 
 ### Processor Microservice (process-srv)⚙️
 
-Processes the data by aggregating events using Redis, also responsible for handling data duplication. Fetches the data from RabbitMQ and transfers it to the Notify Microservice using Redis Pub-Sub functionality.
+The actual "worker". Processes the data by aggregating events using Redis, also responsible for handling data duplication. Fetches the data from RabbitMQ and transfers it to the Notify Microservice using Redis Pub-Sub functionality.
 
 ### Redis📩
 
