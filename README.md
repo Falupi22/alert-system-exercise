@@ -51,7 +51,7 @@ It also assumes you have Node.js and Docker installed on your PC (Docker's k8s e
 
 Now open cmd in the folder generated. Then type the following:
 
-`cd backend && yarn install`
+`cd backend && cd ./<folder-name> && yarn install`
 
 This should install all the modules of all the microservices.
 The ports 30000 and 30001 were used arbitrarily for the entry point of some components in the system, but this can be changed by setting NodePort values within the corresponding yaml files.
@@ -59,8 +59,10 @@ The ports 30000 and 30001 were used arbitrarily for the entry point of some comp
 Once you're in a microservice's folder, type `yarn dev` to run a single, local instance of it.
 Each folder contains the code (./src) and the yaml files (./infra).
 
-If you wish to run it within a docker, type
-`docker build -t falupi22/(name of the image in the relevant yaml file) -f ./DockerFile . && docker run`
+If you wish to run it within a docker, type the following:
+`docker pull falupi22/<folder-name> (Optional)`
+`docker build -t falupi22/<folder-name> -f ./DockerFile .`
+`docker run falupi22/<folder-name>`
 
 A fully working system, receiving data, should result in the following:
 

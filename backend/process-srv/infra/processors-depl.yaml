@@ -1,32 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: processors-depl
+    name: processors-depl
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: processors
-  template:
-    metadata:
-      labels:
-        app: processors
-    spec:
-      containers:
-        - name: processors
-          imagePullPolicy: Never
-          image: falupi22/process-srv
+    replicas: 1
+    selector:
+        matchLabels:
+            app: processors
+    template:
+        metadata:
+            labels:
+                app: processors
+        spec:
+            containers:
+                - name: processors
+                  imagePullPolicy: Never
+                  image: falupi22/process-srv
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: processors-cluster-ip-srv
+    name: processors-cluster-ip-srv
 spec:
-  type: ClusterIP
-  selector:
-    app: processors
-  ports:
-    - name: processors
-      protocol: TCP
-      port: 4001
-      targetPort: 4001
+    type: ClusterIP
+    selector:
+        app: processors
+    ports:
+        - name: processors
+          protocol: TCP
+          port: 4001
+          targetPort: 4001
