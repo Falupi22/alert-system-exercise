@@ -1,14 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import { sendMessage } from "../common/amqp";
 import { randomUUID } from "crypto";
-
-interface AlertEvent {
-    location: string;
-    type: string;
-    timestamp: string;
-    duration: number;
-    uuid?: string;
-}
+import { AlertEvent } from "../common";
 
 export const postAlertHandler = asyncHandler(async (req, res) => {
     const event: AlertEvent = req.body;

@@ -1,3 +1,3 @@
-import Config from './types';
+import { Config, AlertEvent} from './types';
 
-export { Config };
+export { Config, AlertEvent };
