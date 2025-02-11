@@ -1,12 +1,9 @@
-import { consumeMessages } from "./common";
-import { connectRedis, getValue, publishMessage, setValue } from "./common/redis";
-import { AlertEvent, ProcessedAlertEvent } from "./common/types";
+import { connectRedis, getValue, publishMessage, setValue, connectRabbit, ProcessedAlertEvent, AlertEvent } from "./common";
 
 console.log("Processor has started!");
 
 connectRedis();
-
-consumeMessages(async (event: AlertEvent) => {    
+connectRabbit(async (event: AlertEvent) => {    
     // add the field to redis
     const key = `alerts:${event.location}`; 
 

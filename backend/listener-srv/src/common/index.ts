@@ -1,3 +1,4 @@
-import { Config, AlertEvent} from './types';
+import { Config, AlertEvent } from './types';
+import { connectRabbit, sendMessage } from "./amqp";
 
-export { Config, AlertEvent };
+export { Config, AlertEvent, connectRabbit, sendMessage };

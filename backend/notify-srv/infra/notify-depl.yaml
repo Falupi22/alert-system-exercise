@@ -14,8 +14,12 @@ spec:
         spec:
             containers:
                 - name: notify
-                  imagePullPolicy: Never
                   image: falupi22/notify-srv
+                  resources:
+                      requests:
+                          cpu: '200m'
+                      limits:
+                          cpu: '500m'
 ---
 apiVersion: v1
 kind: Service

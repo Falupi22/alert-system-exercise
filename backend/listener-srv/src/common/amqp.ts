@@ -1,35 +1,36 @@
 import { connect, Connection } from 'amqplib';
 import { Settings } from "../config";
 
-/**age(message) {
- * Sends a message to a RabbitMQ queue.t connection = await amqp.connect('amqp://localhost');
- *hannel();
- * @remarks
- * This function connects to a RabbitMQ server, creates a channel, asserts a queue,= 'task_queue';  // Name of the queue
- * sends the provided message to the queue, and logs the sent message.
- * The connection to the RabbitMQ server is closed after 500 milliseconds.
- *
- * @param message - The message to be sent to the queue.
- * @returns {Promise<void>} - A promise that resolves when the message is sent.
- *
- * @exampleersistent: true,  // Ensures the message survives RabbitMQ restarts
- * ```typescript
- * sendMessage('Task 1');
- * sendMessage('Task 2');ge);
- * ```*/
+
+let connection: Connection;
+const RETRY_DELAY = 2000; // 2 seconds
+
+export const connectRabbit = async (): Promise<void> => {
+
+    while (true) {
+        try {
+            connection = await connect(Settings.rabbit_address);
+            console.log('Connected to RabbitMQ');
+            return;
+        } catch (error) {
+            console.error('Error connecting to RabbitMQ:', error);
+            console.log(`Retrying in ${RETRY_DELAY / 1000} seconds...`);
+            await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+        }
+    }
+}
 
 export const sendMessage = async(message: string): Promise<boolean> => {
+    let channel;
     try {
-    const connection: Connection = await connect(Settings.rabbit_address);
-    const channel = await connection.createChannel();
+    channel = await connection.createChannel();
 
-    const queue = Settings.from_listener_queue_name; // Name of the queue
-    await channel.assertQueue(queue, {
+    await channel.assertQueue( Settings.from_listener_queue_name, {
         durable: true, // Ensures the queue survives RabbitMQ restarts
     });
 
     // Send a message to the queue
-    channel.sendToQueue(queue, Buffer.from(message), {
+    channel.sendToQueue( Settings.from_listener_queue_name, Buffer.from(message), {
         persistent: true, // Ensures the message survives RabbitMQ restarts
     });
     console.log('Sent:', message);
@@ -38,6 +39,23 @@ export const sendMessage = async(message: string): Promise<boolean> => {
 
     } catch (error) { 
         console.error('Error sending message:', error);
+
+        // Retry mechanism
+        while (true) {
+            try {
+                // Send a message to the queue
+            channel?.sendToQueue( Settings.from_listener_queue_name, Buffer.from(message), {
+                persistent: true, // Ensures the message survives RabbitMQ restarts
+            });
+
+                break;
+            } catch (retryError) {
+                console.error('Error sending message after retry:', retryError);
+                await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+            }
+        }
+
+
         return false;
     }
 }

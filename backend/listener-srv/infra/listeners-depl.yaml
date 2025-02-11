@@ -14,8 +14,12 @@ spec:
         spec:
             containers:
                 - name: listeners
-                  imagePullPolicy: Never
                   image: falupi22/listener-srv
+                  resources:
+                      requests:
+                          cpu: '200m'
+                      limits:
+                          cpu: '500m'
 ---
 apiVersion: v1
 kind: Service

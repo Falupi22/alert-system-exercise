@@ -7,6 +7,7 @@ deploy:
       - ./process-srv/infra/redis.depl.yaml
       - ./listener-srv/infra/listeners-depl.yaml
       - ./process-srv/infra/processors-depl.yaml
+      - ./process-srv/infra/processors-hpa.yaml
       - ./notify-srv/infra/notify-depl.yaml
 build:
   local:
