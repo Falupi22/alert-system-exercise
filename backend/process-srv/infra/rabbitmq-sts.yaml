@@ -1,8 +1,9 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
     name: rabbitmq
 spec:
+    serviceName: 'rabbitmq'
     replicas: 1
     selector:
         matchLabels:
@@ -15,6 +16,11 @@ spec:
             containers:
                 - name: rabbitmq
                   image: rabbitmq:3-management # Includes the management UI
+                  resources:
+                      requests:
+                          cpu: '200m'
+                      limits:
+                          cpu: '500m'
                   ports:
                       - containerPort: 5672 # AMQP port
                       - containerPort: 15672 # Management UI port
@@ -23,6 +29,17 @@ spec:
                         value: 'admin'
                       - name: RABBITMQ_DEFAULT_PASS
                         value: 'password'
+                  volumeMounts:
+                      - name: rabbitmq-data
+                        mountPath: /var/lib/rabbitmq
+    volumeClaimTemplates:
+        - metadata:
+              name: rabbitmq-data
+          spec:
+              accessModes: ['ReadWriteOnce']
+              resources:
+                  requests:
+                      storage: 1Gi
 ---
 apiVersion: v1
 kind: Service
