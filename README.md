@@ -7,74 +7,69 @@
 
 ## Intro
 
-This system receives emergency alerts from various sources in real-time and transfers them to a vast number of clients, informing them of the danger⚠️.
+This system received emergency alerts from various sources in real-time and transfers them to vast number of clients, informing them of the danger⚠️.
 
 ## Overview
 
-This repo consists of the built-in front-end React.js application, and a back-end, microservices-based Node.js server consisting of three microservices written in TypeScript.
-
-The root folder contains the frontend folder given in the task, the backend folder which contains most of the content - each microservice has a folder. It also contains a Skaffold file - will be explained later. There is the assets folder for the screenshots and docs folder for more profound documentation - design motivation.
+This repo consists of the built in front-end React.js application, and a back-end, microservices based Node.js server consists of three microservices written in typescript.
 
 ### Alert Generator (alert-generator)🤖
 
-A script that mimics a real-life alert resource.
-Sends random alerts, at a frequency set by the user.
-Written in TypeScript.
+A script which mimics a real-life alert resource.
+Sends random alerts, in a frequency told by the user.
+Written in typescript.
 
 ### Listener Microservice (listener-srv)📡
 
 The data's entry point to the back-end.
 Responsible for handling the HTTP requests containing the raw data sent from the source. The listener(s) listen to incoming data and enqueue it in the RabbitMQ message broker.
 
-### RabbitMQ🐰
+### Rabbit MQ🐰
 
-The message broker between the Listener and the Processor Microservice (see the following). It is deployed in the cluster within a deployment of its own.
+The message broker between the Listener and the Processor Microservice (see the following). It is being deployed in the cluster within a deployment of its own
 
 ### Processor Microservice (process-srv)⚙️
 
-The actual "worker". Processes the data by aggregating events using Redis, also responsible for handling data duplication. Fetches the data from RabbitMQ and transfers it to the Notify Microservice using Redis Pub-Sub functionality.
+Processes the data by aggregating events using Redis, also responsible for handling data duplication. Fetches the data from the RabbitMQ and transfers it with the Notify Microservice using Redis Pub-Sub functionality.
 
 ### Redis📩
 
-Stores event data for event aggregation and is used as a message distributor to the Notify Microservice by broadcasting the messages to all the instances. It is deployed in the cluster within a deployment of its own.
+Stores event data for event aggregation and used as a message distributor to the Notify Microservice by broadcasting the messages to all the instances. It is being deployed in the cluster within a deployment of its own.
 
 ### Notify Microservice (notify-srv)🔔
 
-Informs the clients of new alerts by subscribing to Redis, getting the events' data from the designated channel which the events are published to by the Processor Microservice. Informs the clients of new alerts by leveraging the socket.io library.
+Informs the clients of new alerts by subscribing to Redis, getting the events' data from the designated channel which the events are published to by the Processor Microservice. Informs the clients of new alerts by leveraging socket.io library.
 
 ## Setup
 
-This guide assumes your React.js app has already been set up.
-It also assumes you have Node.js and Docker installed on your PC (Docker's k8s engine was used for the development of this).
+This guide assumes your React.js app has already been set.
+It also assumes you Node.js and Docker installed in your PC (Docker's k8s engine was used for the development of this).
+Every folder has its own manifests which can be found in the infra folder. Some of these manifests exist in more than one microservice folder because it might be used there as well.
 
-`git clone https://github.com/Falupi22/alert-system-exercise`
+`git clone https://github.com/Falupi22/alert-system-exercise
+`
 
 Now open cmd in the folder generated. Then type the following:
 
-`cd backend && cd ./<folder-name> && yarn install`
+`cd backend`
+`yarn install`
 
-This should install all the modules of all the microservices.
-The ports 30000 and 30001 were used arbitrarily for the entry point of some components in the system, but this can be changed by setting NodePort values within the corresponding yaml files.
+This should install all the modules of all the microservice.
+The ports 30000 and 30001 were used arbitrarily for the entry point of some components in the system, but this can be change by setting .env variables within the microservice/app folder of in the config file itself.
 
-Once you're in a microservice's folder, type `yarn dev` to run a single, local instance of it.
-Each folder contains the code (./src) and the yaml files (./infra).
+Hit `yarn dev` for running a single, local instance of each microservice.
 
-If you wish to run it within a docker, type the following:
-`docker pull falupi22/<folder-name> (Optional)`
-`docker build -t falupi22/<folder-name> -f ./DockerFile .`
-`docker run falupi22/<folder-name>`
-
-A fully working system, receiving data, should result in the following:
+A full working system, receiving data, should result in the following:
 
 ![Web page](assets/live.png)
 
 ### Skaffold
 
-Skaffold is an easy way to deploy the entire back-end as a local Kubernetes cluster using only one command! The skaffold.yaml file contains all the information necessary for deploying the app. It also watches for file changes and updates the cluster automatically.
+Skaffold is an easy way to deploy the entire back-end as a local kubernetes cluster using only one command! skaffold.yaml file contains all the information necessary for deploying the app. It is also watching for file changing and updated the cluster automatically.
 
 To install - https://skaffold.dev/docs/install/
 
-Once ready, make sure to locate yourself in ./backend, and then type
+Once ready, make sure to locate yourself in ./backend, and the type
 `skaffold dev`
 
 It might take a few minutes, but once it's ready, it handles everything.
@@ -86,8 +81,6 @@ You should see the following:
 
 ## Notes
 
-- There is a NodePort service for the UI management tools of the RabbitMQ. It is included within the yaml but is not necessary for a functioning system.
-  
-- The frontend was tweaked due to mismatching names of parameters within the task (sentTime - startTime, duration - endTime). I stuck with the names given by the task.
+- The frontend was tweaked due to mismatching names of parameters within the task (sentTime - startTime, duration - endTime). I sticked with the names in the task.
 
-- The port of the socket IO server has been replaced (4000-30001) for convenience issues (NodePort port is usually a 5-digit number).
+- The port of the socket IO server has been replaced (4000-30001) for convenience issue (NodePort port is usually a 5 digits number).

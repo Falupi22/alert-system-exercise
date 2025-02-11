@@ -9,6 +9,7 @@
     - [RabbitMQ:🐰](#rabbitmq)
     - [Redis📩](#redis)
     - [Socket IO (websocket)⚡](#socket-io-websocket)
+    - [Event Aggregation Handling](#event-aggregation-handling)
 
 ## Design📐
 ![Architecture](../assets/alert-system-design.png)
@@ -19,6 +20,8 @@ The system needs to be scalable because there is an increasing number of clients
 It also needs to be highly available and fault-tolerant due to its significance in providing life-saving information to its users. Fault tolerance is a must.
 
 It also needs to be quick in terms of latency. Once the data is received in the system, it should be conveyed as quickly as possible to the clients. Every second is important!
+
+Of course there are the requirements to face - the event aggregation, and the challenges derived from it - event duplication and error handling.
 
 ## Challenges🤔
 
@@ -36,8 +39,6 @@ There are a few solutions to the given challenges:
 
 ### Microservices⚙️
 
-The truth is that Microservices were noted as a requirement in the task, but I would have used them anyway.
-
 It is scalable! Once the traffic is heavy, another instance of the busy microservice is deployed seamlessly in the cluster.
 
 It is more fault-tolerant - if a microservice crashes, another one comes to the rescue while the other is redeployed.
@@ -53,20 +54,17 @@ There are several different microservices:
 
 ### RabbitMQ:🐰
 
-The truth is that RabbitMQ was noted as a requirement in the task, but I would have used it anyway.
-
 It provides message persistence, so if some worker crashes the event is kept in the queue until it is consumed by another one.
 
 By this decoupling, it reduces the dependency between the listener and the processor. It also makes it easy to develop in big teams because the team does not rely on shared APIs.
 
 It also supports load balancing, which is very important in high-scale apps, so many microservices can handle any requests at once. It works by subscription of many processor microservices to the queue, and each one consumes at a time, acknowledging the message so it is dequeued from the queue, and requeued (nAcked) if there was a problem with the message processing.
 
-In the project, there is a RabbitMQ deployment.
+In the project, there is a RabbitMQ StatefulSet.
 There is only one queue, and it is used to deliver messages from the listeners to the processors, so many listeners can deliver many events to many processors.
+It is a statefulset because if it restarts the data needs to be persisted, and statefulsets have this ability.
 
 ### Redis📩
-
-The truth is that Redis was noted as a requirement in the task, but I would have used it anyway.
 
 Microservices should be stateless, so when one crashes, no data is lost. However, some data should still be accessed quickly, and databases like Postgres and MongoDB are not quick enough for that task.
 
@@ -81,3 +79,14 @@ Redis is also used for handling communication between the processor and the noti
 Bidirectional way of client-server communication.
 
 It was required in the task but it is the best way of informing the client of events because it lets the server deliver the data *immediately* without waiting to be polled.
+
+
+### Event Aggregation Handling
+
+Every event is being processed and sent to the client as an open event.
+A close event is the sum of all the events associated with a location. That is why the location is stored
+in redis alongside with its start time and the duration (end time - which is different from the duration given in the raw alert implying the length of the alert, that is according to the task), so every time a new event is received with an active location, the duration is incremented by the start time and the duration (remember - end time) (assuming the duration can be different within alerts).
+
+Moreover, when a processor receives an event, it acks it so next events can be processed. If the processor fails to process it, it nAcks it so it requeued for another processing attempt.
+
+In order to prevent duplications of events, the listener adds a UUID to the event, and then the processor stores that value in redis for a very short time, so if a processor receives an event with the same uuid, it does not process it.
