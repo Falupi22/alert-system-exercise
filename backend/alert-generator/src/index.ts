@@ -18,7 +18,9 @@ rl.question('How many requests per minute? ', (answer) => {
     }
 
     const interval = 60000 / requestsPerMinute;
-    const url = 'http://localhost:30000/api/alerts'; // Replace with the actual URL of listener0srv
+    const port = process.env.PORT || 4000; // Default port if not provided in environment variables
+    const address = process.env.ADDRESS || 'localhost'
+    const url = `http://${address}:${port}/api/alerts`; // Replace with the actual URL of listener0srv
 
     const sendRequest = () => {
         const event = {

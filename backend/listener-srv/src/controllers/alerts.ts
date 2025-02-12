@@ -14,6 +14,7 @@ export const postAlertHandler = asyncHandler(async (req, res) => {
         typeof event.duration !== 'number'
     ) {
         res.status(400).json('Invalid event data');
+        res.end();
         return;
     }
 
