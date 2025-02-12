@@ -1,4 +1,4 @@
-import { connectRedis, getValue, publishMessage, setValue, connectRabbit, ProcessedAlertEvent, AlertEvent, exists } from "../common";
+import { getValue, publishMessage, setValue, ProcessedAlertEvent, AlertEvent, exists } from "../common";
 
 const handleEvents = async (event: AlertEvent) => {    
     // add the field to redis
@@ -31,9 +31,11 @@ const handleEvents = async (event: AlertEvent) => {
         const existingObj: ProcessedAlertEvent = JSON.parse(existingValue)
         let newDuration;
 
-        // Checking in case the duration number is changed in the raw alert
         console.log(`${existingObj.duration} <=> ${processedAlertEvent.duration}`);
         
+        // Checking in case the duration number is changed in the raw alert, assuming alerts might have
+        // different lengths.
+        // Update the alert if the new duration (timestamp + duration from the raw alert) is later than the existing one.
         if (new Date(existingObj.duration).getTime() < new Date(processedAlertEvent.duration).getTime()) {
             newDuration = new Date(existingObj.duration).toISOString();
             console.log('Alert already exists. Updating duration...');
