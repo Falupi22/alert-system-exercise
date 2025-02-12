@@ -12,7 +12,7 @@ export const postAlertHandler = asyncHandler(async (req, res) => {
         !event.location ||
         !event.type ||
         !event.timestamp ||
-        typeof event.duration !== 'number' || event.duration > 0 ||
+        typeof event.duration !== 'number' || event.duration <= 0 ||
         isNaN(Date.parse(event.timestamp))
     ) {
         res.status(400).json('Invalid event data');

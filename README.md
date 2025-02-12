@@ -23,12 +23,12 @@ Written in TypeScript.
 
 ### Listener Microservice (listener-srv)📡
 
-The data's entry point to the back-end.
+The back-end's entry point for incoming data.
 Responsible for handling the HTTP requests containing the raw data sent from the source. The listener(s) listen to incoming data and enqueue it in the RabbitMQ message broker.
 
 ### RabbitMQ🐰
 
-The message broker between the Listener and the Processor Microservice (see the following). It is deployed in the cluster within a deployment of its own.
+The message broker between the Listener and the Processor Microservice (see the following). It is deployed in the cluster within a statefulset of its own.
 
 ### Processor Microservice (process-srv)⚙️
 
@@ -52,7 +52,8 @@ The guide assumes you have Node.js and Docker installed on your PC (Docker's k8s
 
 Now open cmd in the folder generated. Then type the following:
 
-`cd backend && cd ./<folder-name> && yarn install`
+`cd backend && cd ./<folder-name>`
+``yarn install && yarn install --dev`
 
 Each folder contains the code (./src) and the yaml files (./infra).
 Do this for all the microservices.
@@ -79,6 +80,7 @@ Skaffold is an easy way to deploy the entire back-end as a local Kubernetes clus
 
 To install - https://skaffold.dev/docs/install/
 
+Make sure to run `yarn build` for each microservice.
 Once ready, make sure to locate yourself in ./backend, and then type
 `skaffold dev`
 
