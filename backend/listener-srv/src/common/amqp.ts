@@ -23,6 +23,7 @@ export const connectRabbit = async (): Promise<void> => {
 export const sendMessage = async(message: string): Promise<boolean> => {
     let channel;
     try {
+    console.log('inside send');
     channel = await connection.createChannel();
 
     await channel.assertQueue( Settings.from_listener_queue_name, {
