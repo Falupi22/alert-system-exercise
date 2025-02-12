@@ -1,4 +1,5 @@
-import { connectRedis, getValue, publishMessage, setValue, connectRabbit, ProcessedAlertEvent, AlertEvent } from "./common";
+import { eventNames } from "process";
+import { connectRedis, getValue, publishMessage, setValue, connectRabbit, ProcessedAlertEvent, AlertEvent, exists } from "./common";
 
 console.log("Processor has started!");
 
@@ -20,7 +21,14 @@ connectRabbit(async (event: AlertEvent) => {
         eventType: "open"
     }
     console.log('Publishing event:', event);
-    publishMessage(JSON.stringify(processedAlertEvent));
+
+    // Check if the alert already exists in Redis, preventing it from being processed and transferred to the client
+    if (!(await exists(`id:${event.uuid}`))) {
+        publishMessage(JSON.stringify(processedAlertEvent)); 
+
+         // Stores the ID on order to prevent data duplication.
+        await setValue(`id:${event.uuid}`, '', new Date(Date.now() + 100));
+    }
 
     let newSentTime: string = processedAlertEvent.sentTime;
     if (existingValue) {

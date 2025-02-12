@@ -25,9 +25,22 @@ export const connectRedis = async() => {
 
 // Function to set a key-value pair in Redis
 export const setValue = async (key: string, value: string, expiryDate: Date): Promise<void> => {
-    const time = dayjs().subtract(expiryDate.getTime()).get('milliseconds')
+    const time = dayjs().subtract(expiryDate.getTime()).get('seconds')
     console.log("time of expiry", time)
     await redisClient.set(key, value, { EX: time });
+};
+
+// Checks if an item exists in redis
+
+export const exists = async (key: string): Promise<boolean> => {
+    try {
+        const exists = await redisClient.exists(key);
+        return exists == 1;
+    }
+    catch (err) {
+        console.error('Error checking key existence:', err);
+        return false;
+    }
 };
 
 // Function to retrieve a value by key from Redis
