@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 
 const AlertListener = ({ selectedLocations }) => {
   useEffect(() => {
-    const socket = io("http://localhost:30001"); // Replace with your backend URL
+    const socket = io(process.env.REACT_APP_BACKEND_URL || "http://localhost:30001"); // Replace with your backend URL
 
     socket.on("alert", (data) => {
       const { location, eventType, type, sentTime, duration } = data;

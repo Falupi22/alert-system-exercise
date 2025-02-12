@@ -10,5 +10,5 @@ services:
     volumes:
       - ./:/app
     environment:
-      NODE_ENV: development
+      MODE: development
     command: yarn start

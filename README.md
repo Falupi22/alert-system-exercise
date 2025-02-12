@@ -42,10 +42,11 @@ Stores event data for event aggregation and is used as a message distributor to 
 
 Informs the clients of new alerts by subscribing to Redis, getting the events' data from the designated channel which the events are published to by the Processor Microservice. Informs the clients of new alerts by leveraging the socket.io library.
 
+For more information about the challenges of the design, scaling and more, see the [Design Docs](./docs/Design_README.md)
+
 ## Setup
 
-This guide assumes your React.js app has already been set up.
-It also assumes you have Node.js and Docker installed on your PC (Docker's k8s engine was used for the development of this).
+The guide assumes you have Node.js and Docker installed on your PC (Docker's k8s engine was used for the development of this).
 
 `git clone https://github.com/Falupi22/alert-system-exercise`
 
@@ -53,16 +54,20 @@ Now open cmd in the folder generated. Then type the following:
 
 `cd backend && cd ./<folder-name> && yarn install`
 
-This should install all the modules of all the microservices.
+Each folder contains the code (./src) and the yaml files (./infra).
+Do this for all the microservices.
+Then, enter 
+``cd ../frontend && yarn install``
+
+If you are in the frontend folder, run `yarn start` to run the app.
+If you're in a microservice's folder, type `yarn dev` to run a single, local instance of it.
+
 The ports 30000 and 30001 were used arbitrarily for the entry point of some components in the system, but this can be changed by setting NodePort values within the corresponding yaml files.
 
-Once you're in a microservice's folder, type `yarn dev` to run a single, local instance of it.
-Each folder contains the code (./src) and the yaml files (./infra).
-
-If you wish to run it within a docker, type the following:
-`docker pull falupi22/<folder-name> (Optional)`
-`docker build -t falupi22/<folder-name> -f ./DockerFile .`
-`docker run falupi22/<folder-name>`
+If you wish to run it within a docker, run the following:
+``yarn build``
+``cd <dest-folder-srv> && docker compose up``
+Dont forget to dockerize rabbitmq and redis found in backend/infra as well.
 
 A fully working system, receiving data, should result in the following:
 
@@ -88,6 +93,6 @@ You should see the following:
 
 - There is a NodePort service for the UI management tools of the RabbitMQ. It is included within the yaml but is not necessary for a functioning system.
   
-- The frontend was tweaked due to mismatching names of parameters within the task (sentTime - startTime, duration - endTime). I stuck with the names given by the task.
+- The frontend was tweaked due to mismatching names of parameters within the task (sentTime - startTime, duration - endTime). I sticked with the names given by the task.
 
 - The port of the socket IO server has been replaced (4000-30001) for convenience issues (NodePort port is usually a 5-digit number).

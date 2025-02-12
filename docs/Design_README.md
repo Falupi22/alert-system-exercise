@@ -52,6 +52,9 @@ There are several different microservices:
 - Processor - Processes the data by aggregating events and remodeling the data (small modifications). Also works as a single unit (can be duplicated in a deployment). Receives data from the queue. Broadcasts the event to all the notify microservices using Redis Pub-Sub functionality.
 - Notify - Notifies the user when a new event arrives. Works as a single unit (can be duplicated in a deployment) because the processor does not know all the current events, so it broadcasts the event to all of the notify microservices, which broadcast the event to all of the socket connections of each one of them.   
 
+In order to scale the processors horizontally, An HPA was used in order to scale them automaticsally according to incoming traffic. The min and max limits were set in the processors deployment manfest, and a threshold for the pod scaling was set in the manifest of the HPA.
+
+
 ### RabbitMQ:🐰
 
 It provides message persistence, so if some worker crashes the event is kept in the queue until it is consumed by another one.
