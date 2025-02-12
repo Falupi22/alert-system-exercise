@@ -61,8 +61,8 @@ Then, enter
 
 If you are in the frontend folder, run `yarn start` to run the app.
 If you're in a microservice's folder, type `yarn dev` to run a single, local instance of it.
-
-The ports 30000 and 30001 were used arbitrarily for the entry point of some components in the system, but this can be changed by setting NodePort values within the corresponding yaml files.
+It is highly recommended to run local instances of them using docker-compose, If you still wish to run the whole system in local mode, see the `config.ts` file of each microservice for netwrok configuration.
+The ports 30000 and 30001 were used arbitrarily for the entry point of some components in the system (using k8s), but this can be changed by setting NodePort values within the corresponding yaml files.
 
 If you wish to run it within a docker, run the following:
 ``yarn build``

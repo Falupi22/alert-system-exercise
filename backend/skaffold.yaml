@@ -6,6 +6,7 @@ deploy:
       - ./infra/rabbitmq/rabbitmq-sts.yaml
       - ./infra/redis/redis-depl.yaml
       - ./listener-srv/infra/listeners-depl.yaml
+      - ./listener-srv/infra/listeners-hpa.yaml
       - ./process-srv/infra/processors-depl.yaml
       - ./process-srv/infra/processors-hpa.yaml
       - ./notify-srv/infra/notify-depl.yaml
