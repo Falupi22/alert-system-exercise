@@ -1,5 +1,6 @@
 import axios from 'axios';
 import dayjs from "dayjs";
+import dotenv from "dotenv";
 import * as readline from 'readline';
 
 const rl = readline.createInterface({
@@ -8,6 +9,8 @@ const rl = readline.createInterface({
 });
 
 const locations: Array<string> = ['Nahariya', 'Haifa', 'Tel Aviv', 'Jerusalem'];
+
+dotenv.config({ path: __dirname + '../../.env'});
 
 rl.question('How many requests per minute? ', (answer) => {
     const requestsPerMinute = parseInt(answer);
@@ -26,8 +29,8 @@ rl.question('How many requests per minute? ', (answer) => {
         const event = {
             "location": locations[Math.floor(Math.random() * locations.length)],
             "type": "Rocket Alert",
-            "timestamp": dayjs().add(1, 'minute').toISOString(),
-            "duration": 1
+            "timestamp": dayjs().add(10, 'minute').toISOString(),
+            "duration": 10
         };
 
         axios.post(url, event)
