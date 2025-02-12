@@ -14,13 +14,12 @@ export const postAlertHandler = asyncHandler(async (req, res) => {
         typeof event.duration !== 'number'
     ) {
         res.status(400).json('Invalid event data');
+        return;
     }
-
-    // Process the event (this is just a placeholder, replace with actual processing logic)
-    console.log('Processing event:', event);
 
     // Add uuid to the event    
     event.uuid = randomUUID().toString();
+
     if (await sendMessage(JSON.stringify(event))) {
         res.status(200).json('Event processed successfully');
     }

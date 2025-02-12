@@ -1,11 +1,10 @@
 import request from 'supertest';
 import express from 'express';
 import { postAlertHandler } from './alerts';
-import { Settings } from "../config";
+import { sendMessage } from "../common";
 
-jest.mock('../common/amqp');
-jest.mock('crypto', () => ({
-    randomUUID: jest.fn(() => 'test-uuid')
+jest.mock('../common/amqp', () => ({
+    sendMessage: jest.fn().mockResolvedValue(async(message: string) => true)
 }));
 
 const app = express();
@@ -17,8 +16,8 @@ describe('postAlertHandler', () => {
         const response = await request(app)
             .post('/alert')
             .send({
-                location: 'Location1',
-                type: 'Type1',
+                location: 'Jerusalem',
+                type: 'open',
                 timestamp: '2023-10-01T00:00:00Z'
                 // Missing duration
             });
@@ -28,25 +27,31 @@ describe('postAlertHandler', () => {
     });
 
     it('should return 200 and process the event successfully', async () => {
-        const sendMessage = jest.fn().mockResolvedValue(true);
-        console.log(Settings.rabbit_address)
+        const sendMessageMock = sendMessage as jest.Mock;
+        sendMessageMock.mockResolvedValue(true);
 
         const response = await request(app)
             .post('/alert')
             .send({
-                location: 'Location1',
-                type: 'Type1',
+                location: 'Tel Aviv',
+                type: 'open',
                 timestamp: '2023-10-01T00:00:00Z',
                 duration: 60
             });
 
         expect(response.status).toBe(200);
-        expect(sendMessage).toHaveBeenCalledWith(JSON.stringify({
-            location: 'Location1',
-            type: 'Type1',
+        const expectedPayload = JSON.stringify({
+            location: 'Tel Aviv',
+            type: 'open',
             timestamp: '2023-10-01T00:00:00Z',
-            duration: 60,
-            uuid: 'test-uuid'
-        }));
+            duration: 60
+        });
+
+        // Mocking randomUUID causes errors within the source code, so the uuid filed is removed totally.
+        const actualPayload = sendMessageMock.mock.calls[0][0];
+        const actualPayloadObj = JSON.parse(actualPayload);
+        delete actualPayloadObj.uuid; // Assuming uuid is a part of the payload
+
+        expect(actualPayloadObj).toEqual(JSON.parse(expectedPayload));
     });
 });

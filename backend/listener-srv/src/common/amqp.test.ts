@@ -14,10 +14,9 @@ mockSendMessage.mockResolvedValue(true);
 describe('amqp sendMessage', () => {
 
     it('should call sendMessage function', async () => {
-
         const event: AlertEvent = {
-            location: 'Location1',
-            type: 'Type1',
+            location: 'Tel Aviv',
+            type: 'open',
             timestamp: '2023-10-01T00:00:00Z',
             duration: 60
         };
