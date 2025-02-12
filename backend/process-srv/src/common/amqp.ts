@@ -1,8 +1,7 @@
-import amqp, { Connection, connect } from 'amqplib';
+import { Connection, connect } from 'amqplib';
 import { Settings } from "../config";
 import { AlertEvent } from "./types";
 
-const RABBITMQ_URL = Settings.rabbit_address;
 const QUEUE_NAME = Settings.from_listener_queue_name;
 const RETRY_DELAY = 2000;
 

@@ -1,49 +1,77 @@
-import redisMock from "redis-mock";
 import { Settings } from "../config";
-import { ProcessedAlertEvent } from "./types";
-import {connectRedis, setValue, getValue, publishMessage } from "./redis";
-import dayjs from "dayjs";
+import { connectRedis, setValue, getValue, publishMessage } from "./redis";
+
+// Mock the redis package
+jest.mock("redis", () => ({
+  createClient: jest.fn().mockReturnValue({
+    connect: jest.fn(),
+    disconnect: jest.fn(),
+    set: jest.fn(),
+    get: jest.fn(),
+    publish: jest.fn(),
+    isOpen: true, // Simulating the Redis client being open
+  }),
+}));
 
 describe("redis", () => {
-        it("should create a redis client", async () => {
-            const client = await connectRedis();
-            expect(client).toBeDefined();
-            expect(client.isOpen).toBe(true);
-            await client.disconnect()
-        });
+    let mockRedisClient: any;
 
-        it("should set a key-value pair in Redis", async () => {
-            const key = "testKey";
-            const value = "testValue";
-            const expiryDate = new Date(Date.now() + 10000); // 10 seconds from now
-            const client = await connectRedis();
+    beforeAll(() => {
+        // Before all tests, create a mock instance of the Redis client
+        mockRedisClient = require("redis").createClient();
+    });
 
-            await setValue(key, value, expiryDate);
-            const result = await getValue(key);
+    it("should create a redis client", async () => {
+        const client = await connectRedis();
+        expect(client).toBeDefined();
+        expect(client.isOpen).toBe(true);
+        await client.disconnect();
+    });
 
-            expect(result).toBe(value);
-        });
+    it("should set a key-value pair in Redis", async () => {
+        const key = "testKey";
+        const value = "testValue";
+        const expiryDate = new Date(Date.now() + 10000); // 10 seconds from now
+        
+        // Mock the Redis set command
+        mockRedisClient.set.mockResolvedValue("OK"); // Simulate successful set
 
-        it("should retrieve a value by key from Redis", async () => {
-            const key = "testKey";
-            const value = "testValue";
-            const expiryDate = new Date(Date.now() + 10000); // 10 seconds from now
-            await connectRedis();
+        await connectRedis();
+        await setValue(key, value, expiryDate);
 
-            await setValue(key, value, expiryDate);
-            const result = await getValue(key);
+        // Check if set was called with the correct arguments
+        // Ignore the { EX: number } because it is unpredictable  
+        expect(mockRedisClient.set).toHaveBeenCalledWith(key, value, expect.objectContaining({ EX: expect.any(Number) })); // Redis set with expiry
+    });
 
-            expect(result).toBe(value);
-        });
+    it("should retrieve a value by key from Redis", async () => {
+        const key = "testKey";
+        const value = "testValue";
+        const expiryDate = new Date(Date.now() + 10000); // 10 seconds from now
 
-        it("should publish a message to a Redis channel", async () => {
-            const message = "testMessage";
-            const client = await connectRedis();
+        // Mock the Redis get command
+        mockRedisClient.get.mockResolvedValue(value); // Simulate Redis returning the value
 
-            const publishSpy = jest.spyOn(client, 'publish');
+        await connectRedis();
+        await setValue(key, value, expiryDate); // Assume value is set
+        const result = await getValue(key);
 
-            await publishMessage(message);
+        // Assert that the result matches the expected value
+        expect(result).toBe(value);
+        expect(mockRedisClient.get).toHaveBeenCalledWith(key);
+    });
 
-            expect(publishSpy).toHaveBeenCalledWith(Settings.redis_pub_channel, message);
-        })
+    it("should publish a message to a Redis channel", async () => {
+        const message = "testMessage";
+
+        // Mock the Redis publish command
+        mockRedisClient.publish.mockResolvedValue(1); // Simulate successful publish
+
+        const publishSpy = jest.spyOn(mockRedisClient, "publish");
+
+        await publishMessage(message);
+
+        // Ensure the publish method is called with the correct arguments
+        expect(publishSpy).toHaveBeenCalledWith(Settings.redis_pub_channel, message);
+    });
 });
