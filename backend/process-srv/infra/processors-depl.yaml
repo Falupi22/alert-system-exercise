@@ -14,13 +14,14 @@ spec:
         spec:
             containers:
                 - name: processors
-                  imagePullPolicy: Never
                   image: falupi22/process-srv
                   resources:
                       requests:
                           cpu: '200m'
+                          memory: '256Mi'
                       limits:
                           cpu: '500m'
+                          memory: '512Mi'
 ---
 apiVersion: v1
 kind: Service

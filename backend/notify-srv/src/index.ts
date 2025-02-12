@@ -10,9 +10,14 @@ const io = createServer(server);
 
 // broadcast message to all connected clients in socket server
 const createRedisClient = async () => {
+    try {
     await createClient((event) => { 
         console.log('Emission attempt...');
         io.emit('alert', event); }); 
+    }
+    catch(error) {
+        console.error("Error occurred in index.ts", error)
+    }
 }
 
 server.listen(Settings.port, async () => {

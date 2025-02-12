@@ -4,6 +4,7 @@ import { randomUUID } from "crypto";
 import { AlertEvent } from "../common";
 
 export const postAlertHandler = asyncHandler(async (req, res) => {
+    try {
     const event: AlertEvent = req.body;
 
     // Validate the event
@@ -11,7 +12,8 @@ export const postAlertHandler = asyncHandler(async (req, res) => {
         !event.location ||
         !event.type ||
         !event.timestamp ||
-        typeof event.duration !== 'number'
+        typeof event.duration !== 'number' || event.duration > 0 ||
+        isNaN(Date.parse(event.timestamp))
     ) {
         res.status(400).json('Invalid event data');
         res.end();
@@ -30,4 +32,10 @@ export const postAlertHandler = asyncHandler(async (req, res) => {
         res.status(500).json('RabbitMQ error occurred');
         res.end();
     }
+}
+catch(error) {
+    console.error("Error occurred in alerts.ts", error);
+    res.status(500).json('RabbitMQ error occurred');
+    res.end();
+}
 });

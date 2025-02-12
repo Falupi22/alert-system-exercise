@@ -1,6 +1,7 @@
 import { getValue, publishMessage, setValue, ProcessedAlertEvent, AlertEvent, exists } from "../common";
 
 const handleEvents = async (event: AlertEvent) => {    
+    try {
     // add the field to redis
     const key = `alerts:${event.location}`; 
 
@@ -55,7 +56,11 @@ const handleEvents = async (event: AlertEvent) => {
         type: event.type,
         sentTime: newSentTime,
         duration: processedAlertEvent.duration,
-    }), new Date(processedAlertEvent.duration));
+    }), new Date(new Date(processedAlertEvent.duration).getTime()), "EX");
+    }
+    catch (error) {
+        console.error("Error occurred in handleEvents:", error);
+    }
 };
 
 export default handleEvents;
