@@ -9,9 +9,9 @@ export const postAlertHandler = asyncHandler(async (req, res) => {
 
     // Validate the event
     if (
-        !event.location ||
-        !event.type ||
-        !event.timestamp ||
+        !event.location || event.location.trim() === '' ||
+        !event.type || event.type.trim() === '' ||
+        !event.timestamp || event.timestamp.trim() === '' ||
         typeof event.duration !== 'number' || event.duration <= 0 ||
         isNaN(Date.parse(event.timestamp))
     ) {
