@@ -1,5 +1,24 @@
 import { getValue, publishMessage, setValue, ProcessedAlertEvent, AlertEvent, exists } from "../common";
 
+/**
+ * Handles incoming alert events by processing and storing them in Redis, and publishing messages
+ * based on the event data. It ensures that duplicate alerts are not processed and updates existing
+ * alerts if necessary.
+ *
+ * @param {AlertEvent} event - The alert event to be handled.
+ * @returns {Promise<void>} - A promise that resolves when the event has been processed.
+ *
+ * @throws {Error} - Throws an error if there is an issue processing the event.
+ *
+ * The function performs the following steps:
+ * 1. Constructs a Redis key based on the event location.
+ * 2. Retrieves any existing value associated with the key from Redis.
+ * 3. Converts the incoming alert event to a processed alert event.
+ * 4. Checks if the alert already exists in Redis to prevent duplication.
+ * 5. Publishes the processed alert event message.
+ * 6. Updates the existing alert duration if the new duration is later.
+ * 7. Stores the processed alert event in Redis with an expiration time.
+ */
 const handleEvents = async (event: AlertEvent) => {    
     try {
     // add the field to redis

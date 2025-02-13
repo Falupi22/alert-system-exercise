@@ -7,6 +7,13 @@ const RETRY_DELAY = 2000;
 
 let connection: Connection;
 
+/**
+ * Establishes a connection to RabbitMQ and sets up message consumption.
+ * Retries the connection in case of failure with a specified delay.
+ *
+ * @param callback - A function to be called with each received AlertEvent.
+ * @returns A promise that resolves when the connection is successfully established and message consumption is set up.
+ */
 export const connectRabbit = async (callback: (event: AlertEvent) => void): Promise<void> => {
 
     while (true) {
@@ -24,6 +31,14 @@ export const connectRabbit = async (callback: (event: AlertEvent) => void): Prom
     await consumeMessages(callback);
 }
 
+/**
+ * Consumes messages from a specified AMQP queue and processes them using a provided callback function.
+ *
+ * @param callback - A function that processes the consumed message. It takes an `AlertEvent` object as an argument.
+ * @returns A promise that resolves when the message consumption setup is complete.
+ *
+ * @throws Will log an error message if there is an issue with creating the channel or consuming messages.
+ */
 const consumeMessages = async(callback: (event: AlertEvent) => void): Promise<void> => {
     try {
         const channel = await connection.createChannel();
